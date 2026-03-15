@@ -26,7 +26,7 @@ AGENTS = [
     {"name": "Culturomics",         "dir": "Culturomics",           "schedule": "Tuesday 09:00", "has_email": True,  "type": "Modern", "color": "#e74c3c"},
     {"name": "T6SS",                "dir": "T6SS",                  "schedule": "Monday 09:30",  "has_email": True,  "type": "Hybrid", "color": "#34495e"},
     {"name": "BioDetect LinkedIn",  "dir": "BioDetect-LinkedIn",    "schedule": "Daily 10:00",   "has_email": False, "type": "Modern", "color": "#2c3e50"},
-    {"name": "CIRQUA LinkedIn",     "dir": "CIRQUA-LinkedIn",       "schedule": "Manual",        "has_email": False, "type": "Legacy", "color": "#7f8c8d"},
+    {"name": "CIRQUA LinkedIn",     "dir": "CIRQUA-LinkedIn",       "schedule": "Daily 08:00",   "has_email": False, "type": "Legacy", "color": "#7f8c8d", "log": "cirqua_cron.log"},
     {"name": "EU Funding",          "dir": "EU_Funding",            "schedule": "Manual",        "has_email": True,  "type": "Legacy", "color": "#95a5a6"},
 ]
 
@@ -70,11 +70,11 @@ def parse_log(log_path):
             continue
 
         end_m = re.search(
-            r"(?:completed|Completed):\s*(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s*\(exit code:\s*(\d+)\)",
+            r"(?:completed|Completed):\s*(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})(?:\s*\(exit code:\s*(\d+)\))?",
             line)
         if end_m and current:
             current["end_time"] = datetime.strptime(end_m.group(1), "%Y-%m-%d %H:%M:%S")
-            current["exit_code"] = int(end_m.group(2))
+            current["exit_code"] = int(end_m.group(2)) if end_m.group(2) else 0
             current["output"] = "\n".join(current.pop("output_lines"))
             runs.append(current)
             current = None
@@ -101,15 +101,17 @@ def detect_email_status(output, has_email):
     if not output:
         return "unknown"
     t = output.lower()
-    if any(k in t for k in ["email sent", "summary email sent", "summary sent",
-                             "send_message", "email delivered"]):
+    # Check "sent" FIRST — if SMTP succeeded, the draft is just a backup copy
+    sent = any(k in t for k in ["email sent", "summary email sent", "summary sent",
+                                 "sent via smtp", "send_message", "email delivered"])
+    draft = any(k in t for k in ["draft created", "gmail draft", "used gmail draft",
+                                  "draft as fallback", "created in gmail"])
+    if sent:
         return "sent"
-    if any(k in t for k in ["draft created", "gmail draft", "used gmail draft",
-                             "draft as fallback", "created in gmail"]):
+    if draft:
         return "draft"
     if any(k in t for k in ["email failed", "smtp error", "smtp failed"]):
         return "failed"
-    # For LinkedIn agents or agents without email
     if any(k in t for k in ["posted to linkedin", "linkedin post"]):
         return "na"
     return "unknown"
@@ -179,8 +181,12 @@ def determine_health(agent, runs, now):
         if es == "failed":
             return "error", "Email sending failed"
 
-    if any(k in output.lower() for k in ["permission", "blocked", "needs approval",
-                                          "tool needs permission", "approval"]):
+    t_lower = output.lower()
+    has_perm_issue = any(k in t_lower for k in ["permission", "blocked", "needs approval",
+                                                 "tool needs permission"])
+    # Don't flag if the agent self-corrected the permission issue
+    self_fixed = any(k in t_lower for k in ["fixed", "updated", "corrected", "resolved"])
+    if has_perm_issue and not self_fixed:
         return "warning", "Permission issues detected"
 
     # Schedule compliance
@@ -433,7 +439,11 @@ def main():
     statuses = []
 
     for agent in AGENTS:
-        log_path = BASE_DIR / agent["dir"] / "logs" / "cron.log"
+        custom_log = agent.get("log")
+        if custom_log:
+            log_path = BASE_DIR / agent["dir"] / custom_log
+        else:
+            log_path = BASE_DIR / agent["dir"] / "logs" / "cron.log"
         runs = parse_log(log_path)
         status, message = determine_health(agent, runs, now)
         last = runs[-1] if runs else None
