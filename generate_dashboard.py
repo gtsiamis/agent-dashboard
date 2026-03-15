@@ -106,6 +106,9 @@ def detect_email_status(output, has_email):
                                  "sent via smtp", "send_message", "email delivered"])
     draft = any(k in t for k in ["draft created", "gmail draft", "used gmail draft",
                                   "draft as fallback", "created in gmail"])
+    # Exclude "no draft created" false positives
+    if draft and "no draft created" in t:
+        draft = False
     if sent:
         return "sent"
     if draft:
