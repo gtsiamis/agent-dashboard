@@ -28,6 +28,7 @@ AGENTS = [
     {"name": "BioDetect LinkedIn",  "dir": "BioDetect-LinkedIn",    "schedule": "Daily 10:00",   "has_email": False, "type": "Modern", "color": "#2c3e50"},
     {"name": "CIRQUA LinkedIn",     "dir": "CIRQUA-LinkedIn",       "schedule": "Daily 08:00",   "has_email": False, "type": "Legacy", "color": "#7f8c8d", "log": "cirqua_cron.log"},
     {"name": "EU Funding",          "dir": "EU_Funding",            "schedule": "Manual",        "has_email": True,  "type": "Legacy", "color": "#95a5a6"},
+    {"name": "Todo Calendar App",   "dir": "TodoCalendarApp_Health", "schedule": "Every 3h",      "has_email": False, "type": "Service", "color": "#e91e63"},
 ]
 
 WEEKDAYS = {"monday": 0, "tuesday": 1, "wednesday": 2, "thursday": 3,
@@ -129,6 +130,14 @@ def get_expected_last_run(schedule, now):
     if schedule == "Manual":
         return None
     parts = schedule.split()
+    # Handle interval schedules like "Every 3h"
+    if parts[0] == "Every":
+        import re
+        m = re.match(r"(\d+)h", parts[1])
+        if m:
+            hours = int(m.group(1))
+            return now - timedelta(hours=hours)
+        return None
     if parts[0] == "Daily":
         h, m = map(int, parts[1].split(":"))
         expected = now.replace(hour=h, minute=m, second=0, microsecond=0)
