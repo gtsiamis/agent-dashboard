@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Agents Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+        }
+        .header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 24px 32px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #f0f6fc;
+            margin-bottom: 4px;
+        }
+        .subtitle { color: #8b949e; font-size: 14px; }
+        .stats-bar {
+            display: flex;
+            gap: 32px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stat-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+        .stat-label { color: #8b949e; font-size: 14px; }
+        .stat-value { font-weight: 600; font-size: 20px; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 16px;
+            padding: 24px 32px;
+        }
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            transition: border-color 0.2s;
+        }
+        .card:hover { border-color: #58a6ff; }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .card-title { font-size: 15px; font-weight: 600; color: #f0f6fc; }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-healthy { background: #238636; color: #fff; }
+        .badge-warning { background: #9e6a03; color: #fff; }
+        .badge-error   { background: #da3633; color: #fff; }
+        .badge-overdue { background: #da3633; color: #fff; }
+        .badge-unknown { background: #484f58; color: #8b949e; }
+        .badge-running { background: #1f6feb; color: #fff; }
+        .card-details { font-size: 13px; }
+        .card-details .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #21262d;
+        }
+        .card-details .row:last-child { border-bottom: none; }
+        .label { color: #8b949e; }
+        .value { color: #c9d1d9; font-weight: 500; }
+        .email-sent    { color: #3fb950; }
+        .email-draft   { color: #d29922; }
+        .email-failed  { color: #f85149; }
+        .email-na      { color: #484f58; }
+        .email-unknown { color: #8b949e; }
+        .card-message {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #0d1117;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #8b949e;
+            line-height: 1.4;
+        }
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #484f58;
+            font-size: 12px;
+            border-top: 1px solid #21262d;
+            margin-top: 8px;
+        }
+        @media (max-width: 600px) {
+            .header { padding: 16px; }
+            .grid { padding: 16px; grid-template-columns: 1fr; }
+            .stats-bar { gap: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Research Agents Dashboard</h1>
+        <p class="subtitle">Last updated: 2026-03-15 10:48 (Athens)</p>
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-dot" style="background:#3fb950"></div>
+                <span class="stat-value">5</span>
+                <span class="stat-label">Healthy</span>
+            </div>
+            <div class="stat">
+                <div class="stat-dot" style="background:#d29922"></div>
+                <span class="stat-value">5</span>
+                <span class="stat-label">Warning</span>
+            </div>
+            <div class="stat">
+                <div class="stat-dot" style="background:#f85149"></div>
+                <span class="stat-value">2</span>
+                <span class="stat-label">Error</span>
+            </div>
+            <div class="stat">
+                <div class="stat-dot" style="background:#484f58"></div>
+                <span class="stat-value">2</span>
+                <span class="stat-label">Unknown</span>
+            </div>
+        </div>
+    </div>
+    <div class="grid">
+
+        <div class="card" style="border-top: 3px solid #3498db">
+            <div class="card-header">
+                <span class="card-title">Endure Emails</span>
+                <span class="badge badge-warning">Warning</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Daily 06:00</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-15 06:00</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">7.5m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-sent">&#10003; Sent</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Permission issues detected</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #8e44ad">
+            <div class="card-header">
+                <span class="card-title">WIDERA</span>
+                <span class="badge badge-warning">Warning</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Daily 06:30</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-15 06:30</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">9.9m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-draft">&#9888; Draft</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Email went to draft instead of sending</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #1a8a7d">
+            <div class="card-header">
+                <span class="card-title">AquaBiome Emails</span>
+                <span class="badge badge-warning">Warning</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Daily 07:00</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-15 07:00</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">14.1m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-draft">&#9888; Draft</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Email went to draft instead of sending</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #d35400">
+            <div class="card-header">
+                <span class="card-title">REECOVERY Email Sync</span>
+                <span class="badge badge-overdue">Overdue</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Daily 07:15</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-14 16:39</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">10.9m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-sent">&#10003; Sent</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Last ran 18h ago</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #2980b9">
+            <div class="card-header">
+                <span class="card-title">SINERGIA</span>
+                <span class="badge badge-healthy">Healthy</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Daily 07:15</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-15 07:15</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">4.8m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-unknown">? Unknown</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Running normally</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #27ae60">
+            <div class="card-header">
+                <span class="card-title">Daily Briefing</span>
+                <span class="badge badge-healthy">Healthy</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Daily 07:57</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-15 07:57</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">5.0m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-unknown">? Unknown</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Running normally</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #e67e22">
+            <div class="card-header">
+                <span class="card-title">Wolbachia</span>
+                <span class="badge badge-healthy">Healthy</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Friday 09:15</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-14 17:13</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">6.1m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-unknown">? Unknown</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Running normally</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #9b59b6">
+            <div class="card-header">
+                <span class="card-title">Insect Microbiome</span>
+                <span class="badge badge-healthy">Healthy</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Friday 09:00</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-13 09:00</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">5.6m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-sent">&#10003; Sent</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Hybrid</span></div>
+            </div>
+            <div class="card-message">Running normally</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #1abc9c">
+            <div class="card-header">
+                <span class="card-title">Literature Wetlands</span>
+                <span class="badge badge-warning">Warning</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Monday 09:00</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-14 18:43</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">17.2m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-draft">&#9888; Draft</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Email went to draft instead of sending</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #e74c3c">
+            <div class="card-header">
+                <span class="card-title">Culturomics</span>
+                <span class="badge badge-warning">Warning</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Tuesday 09:00</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-14 18:16</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">7.5m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-draft">&#9888; Draft</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Email went to draft instead of sending</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #34495e">
+            <div class="card-header">
+                <span class="card-title">T6SS</span>
+                <span class="badge badge-unknown">Unknown</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Monday 09:30</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">Never</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">&mdash;</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">&mdash;</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-unknown">? Unknown</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Hybrid</span></div>
+            </div>
+            <div class="card-message">No log data</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #2c3e50">
+            <div class="card-header">
+                <span class="card-title">BioDetect LinkedIn</span>
+                <span class="badge badge-healthy">Healthy</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Daily 10:00</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-15 10:36</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">4.2m</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">0</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-na">&mdash;</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Modern</span></div>
+            </div>
+            <div class="card-message">Running normally</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #7f8c8d">
+            <div class="card-header">
+                <span class="card-title">CIRQUA LinkedIn</span>
+                <span class="badge badge-unknown">Unknown</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Manual</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">Never</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">&mdash;</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">&mdash;</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-na">&mdash;</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Legacy</span></div>
+            </div>
+            <div class="card-message">No log data</div>
+        </div>
+
+        <div class="card" style="border-top: 3px solid #95a5a6">
+            <div class="card-header">
+                <span class="card-title">EU Funding</span>
+                <span class="badge badge-error">Error</span>
+            </div>
+            <div class="card-details">
+                <div class="row"><span class="label">Schedule</span><span class="value">Manual</span></div>
+                <div class="row"><span class="label">Last Run</span><span class="value">2026-03-09 09:00</span></div>
+                <div class="row"><span class="label">Duration</span><span class="value">0s</span></div>
+                <div class="row"><span class="label">Exit Code</span><span class="value">1</span></div>
+                <div class="row"><span class="label">Email</span><span class="value email-unknown">? Unknown</span></div>
+                <div class="row"><span class="label">Type</span><span class="value">Legacy</span></div>
+            </div>
+            <div class="card-message">Exit code 1</div>
+        </div>
+    </div>
+    <div class="footer">
+        Research Agents Dashboard &middot; George Tsiamis
+    </div>
+</body>
+</html>
