@@ -11,9 +11,20 @@ export PATH="/opt/homebrew/opt/node@22/bin:/opt/homebrew/bin:/opt/homebrew/sbin:
 # Generate the dashboard
 /opt/homebrew/bin/python3 generate_dashboard.py
 
-# Push to GitHub Pages
+# Push to GitHub Pages — but ONLY if something OTHER than the auto-updating
+# "Last updated:" timestamp line changed. This stops the every-run no-op deploy
+# that was intermittently failing GitHub Pages.
 git add index.html
-if ! git diff --cached --quiet; then
+# count changed +/- lines in index.html that are NOT auto-updating cosmetic text.
+# Two patterns tick over with wall-clock time every run and must be ignored:
+#   - the "Last updated: <ts> (Athens)" subtitle
+#   - the per-card "Last ran <N>h ago" relative-time message
+changed=$(git diff --cached -U0 -- index.html | grep -E '^[+-]' | grep -vE '^(\+\+\+|---)' | grep -vE 'Last updated:|Last ran .*ago' | grep -c .)
+if [ "$changed" -gt 0 ]; then
     git commit -m "Update dashboard $(date '+%Y-%m-%d %H:%M')"
     git push origin main
+else
+    # only the timestamp changed (or nothing) — discard so we do not trigger a no-op Pages deploy
+    git restore --staged index.html 2>/dev/null || git reset -q HEAD index.html
+    git checkout -- index.html
 fi
